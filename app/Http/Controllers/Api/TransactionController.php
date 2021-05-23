@@ -12,7 +12,7 @@ class TransactionController extends Controller
 {
     public function myInfo(Request $request)
     {
-        return $this->success($request->user()->positions, 'Success get user data!', 200);
+        return $this->success($request->user(), 'Success get user data!', 200);
     }
 
     public function getAll()
@@ -49,12 +49,17 @@ class TransactionController extends Controller
     public function update(PositionUpdateRequest $request, $id)
     {
         $data = Position::find($id);
-dd($request->validated());
+
         if(empty($data)) {
             return $this->error('', 'data not found', 404);
         }
 
-        return $this->success($data->update($request->validated()), 'Success update data!', 200);
+        if(!$data->update($request->validated()))
+        {
+            return $this->error('', 'Error update data!', 404);
+        }
+        
+        return $this->success('', 'Success update data!', 200);
     }
 
     public function destroy($id)
@@ -65,6 +70,11 @@ dd($request->validated());
             return $this->error('', 'data not found', 404);
         }
 
-        return $this->success($data->delete(), 'Success delete data!', 200);
+        if(!$data->delete())
+        {
+            return $this->error('', 'Error delete data!', 404);
+        }
+        
+        return $this->success('', 'Success delete data!', 200);
     }
 }
